@@ -21,36 +21,35 @@ public class AliceWebhookController {
             Map<String, Object> requestMap = (Map<String, Object>) request.get("request");
             String utterance = (String) requestMap.get("original_utterance");
 
-            if (utterance == null || utterance.trim().isEmpty()) {
-                utterance = "Привет!";
+            if (utterance == null || utterance.isBlank()) {
+                utterance = "Привет";
             }
 
-            String reply = openAIService.askGpt(utterance);
-            if (reply == null || reply.trim().isEmpty()) {
-                reply = "Извините, я не смог придумать ответ.";
+            String gptResponse = openAIService.askGpt(utterance);
+            if (gptResponse == null || gptResponse.isBlank()) {
+                gptResponse = "Извините, я не смог придумать ответ.";
             }
 
             Map<String, Object> response = new HashMap<>();
-            response.put("text", reply);
+            response.put("text", gptResponse);
             response.put("end_session", false);
 
             Map<String, Object> result = new HashMap<>();
-            result.put("response", response);
             result.put("version", "1.0");
+            result.put("response", response);
 
             return result;
 
         } catch (Exception e) {
-            // fallback ответ для Алисы при сбое
-            Map<String, Object> response = new HashMap<>();
-            response.put("text", "Произошла ошибка на сервере.");
-            response.put("end_session", true);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("text", "Произошла ошибка на сервере.");
+            errorResponse.put("end_session", true);
 
-            Map<String, Object> result = new HashMap<>();
-            result.put("response", response);
-            result.put("version", "1.0");
+            Map<String, Object> fallback = new HashMap<>();
+            fallback.put("version", "1.0");
+            fallback.put("response", errorResponse);
 
-            return result;
+            return fallback;
         }
     }
 }
