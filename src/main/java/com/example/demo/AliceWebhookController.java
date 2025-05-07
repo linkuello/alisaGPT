@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.service.OpenAIService;
+import com.example.demo.OpenAIService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
